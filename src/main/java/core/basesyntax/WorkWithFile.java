@@ -10,6 +10,7 @@ public class WorkWithFile {
     private static final String COMMA = ",";
     private static final String BUY = "buy";
     private static final String SUPPLY = "supply";
+    private static final String RESULT = "result";
     private static final int INITIAL_SUM = 0;
 
     public void getStatistic(String fromFileName, String toFileName) {
@@ -35,8 +36,12 @@ public class WorkWithFile {
             throw new RuntimeException("Can't read the file", e);
         }
 
+        writeToFile(toFileName, getReport(sumBuy, sumSupply));
+    }
+
+    private void writeToFile(String toFileName, String report) {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(toFileName))) {
-            bufferedWriter.write(getReport(sumBuy, sumSupply));
+            bufferedWriter.write(report);
         } catch (IOException e) {
             throw new RuntimeException("Can't write to the file");
         }
@@ -44,9 +49,19 @@ public class WorkWithFile {
 
     private String getReport(int sumBuy, int sumSupply) {
         int result = sumSupply - sumBuy;
+        StringBuilder report = new StringBuilder();
+        report.append(SUPPLY)
+                .append(COMMA)
+                .append(sumSupply)
+                .append(System.lineSeparator())
+                .append(BUY)
+                .append(COMMA)
+                .append(sumBuy)
+                .append(System.lineSeparator())
+                .append(RESULT)
+                .append(COMMA)
+                .append(result);
 
-        return SUPPLY + COMMA + sumSupply + System.lineSeparator()
-                + BUY + COMMA + sumBuy + System.lineSeparator()
-                + "result" + COMMA + result;
+        return report.toString();
     }
 }
