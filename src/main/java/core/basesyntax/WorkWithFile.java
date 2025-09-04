@@ -14,8 +14,14 @@ public class WorkWithFile {
     private static final int INITIAL_SUM = 0;
 
     public void getStatistic(String fromFileName, String toFileName) {
-        int sumBuy = INITIAL_SUM;
-        int sumSupply = INITIAL_SUM;
+        int sumBuy = readFromFile(fromFileName, BUY);
+        int sumSupply = readFromFile(fromFileName, SUPPLY);
+
+        writeToFile(toFileName, getReport(sumBuy, sumSupply));
+    }
+
+    private int readFromFile(String fromFileName, String keyWord) {
+        int sum = INITIAL_SUM;
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fromFileName))) {
             String value = bufferedReader.readLine();
@@ -24,10 +30,8 @@ public class WorkWithFile {
                 String[] data = value.split(COMMA);
                 int number = Integer.parseInt(data[1]);
 
-                if (value.contains(BUY)) {
-                    sumBuy += number;
-                } else if (value.contains(SUPPLY)) {
-                    sumSupply += number;
+                if (value.contains(keyWord)) {
+                    sum += number;
                 }
 
                 value = bufferedReader.readLine();
@@ -36,7 +40,7 @@ public class WorkWithFile {
             throw new RuntimeException("Can't read the file", e);
         }
 
-        writeToFile(toFileName, getReport(sumBuy, sumSupply));
+        return sum;
     }
 
     private void writeToFile(String toFileName, String report) {
