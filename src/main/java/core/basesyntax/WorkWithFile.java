@@ -8,36 +8,47 @@ import java.io.IOException;
 
 public class WorkWithFile {
     private static final String COMMA = ",";
+    private static final String SPACE = " ";
     private static final String BUY = "buy";
     private static final String SUPPLY = "supply";
     private static final String RESULT = "result";
     private static final int INITIAL_SUM = 0;
 
     public void getStatistic(String fromFileName, String toFileName) {
-        int sumBuy = readFromFile(fromFileName, BUY);
-        int sumSupply = readFromFile(fromFileName, SUPPLY);
+        int sumBuy = getSumByKeyWord(getDataFromFile(fromFileName), BUY);
+        int sumSupply = getSumByKeyWord(getDataFromFile(fromFileName), SUPPLY);
 
         writeToFile(toFileName, getReport(sumBuy, sumSupply));
     }
 
-    private int readFromFile(String fromFileName, String keyWord) {
-        int sum = INITIAL_SUM;
+    private String getDataFromFile(String fromFileName) {
+        StringBuilder data = new StringBuilder();
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(fromFileName))) {
             String value = bufferedReader.readLine();
 
             while (value != null) {
-                String[] data = value.split(COMMA);
-                int number = Integer.parseInt(data[1]);
-
-                if (value.contains(keyWord)) {
-                    sum += number;
-                }
-
+                data.append(value).append(SPACE);
                 value = bufferedReader.readLine();
             }
         } catch (IOException e) {
             throw new RuntimeException("Can't read the file", e);
+        }
+
+        return data.toString();
+    }
+
+    private int getSumByKeyWord(String data, String keyWord) {
+        int sum = INITIAL_SUM;
+        String[] splittedData = data.split(SPACE);
+
+        for (String element : splittedData) {
+            if (element.contains(keyWord)) {
+                String[] tempData = element.split(COMMA);
+                int number = Integer.parseInt(tempData[1]);
+
+                sum += number;
+            }
         }
 
         return sum;
